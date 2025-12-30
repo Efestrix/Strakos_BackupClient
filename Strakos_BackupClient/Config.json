@@ -1,0 +1,16 @@
+﻿[
+  {
+    "sources": [
+      "C:\\Users\\jacob\\Desktop\\Blbosti"
+    ],
+    "targets": [
+      "C:\\Users\\jacob\\Desktop\\BackupTest"
+    ],
+    "method": "differential",
+    "timing": "0 12 * * * ?",
+    "retention": {
+      "count": 10,
+      "size": 5
+    }
+  }
+]

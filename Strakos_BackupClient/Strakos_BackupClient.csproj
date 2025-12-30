@@ -7,4 +7,18 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+	<ItemGroup>
+		<None Remove="Config.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Config.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Quartz" Version="3.15.1" />
+	</ItemGroup>
+
 </Project>
