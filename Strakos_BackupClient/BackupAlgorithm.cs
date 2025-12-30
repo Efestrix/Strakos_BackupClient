@@ -72,8 +72,8 @@ namespace Strakos_BackupClient
 
             DirectoryInfo? lastBackup =
                 targetInfo.GetDirectories()
-                          .Where(d => d.Name.StartsWith("full_*") || 
-                          d.Name.StartsWith("incr_*"))
+                          .Where(d => d.Name.StartsWith("full_") || 
+                          d.Name.StartsWith("incr_"))
                           .OrderByDescending(d => d.CreationTime)
                           .FirstOrDefault();
 
