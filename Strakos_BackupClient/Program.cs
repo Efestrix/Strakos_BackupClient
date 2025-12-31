@@ -50,7 +50,6 @@ namespace Strakos_BackupClient
             await scheduler.Start();
             await scheduler.ScheduleJob(jobDetail, trigger);
 
-            Console.WriteLine("Backup dokončen.");
             await Task.Delay(-1);
         }
     }

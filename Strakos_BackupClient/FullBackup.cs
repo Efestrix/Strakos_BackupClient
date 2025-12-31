@@ -18,7 +18,7 @@ namespace Strakos_BackupClient
                 {
                     Copy(source, backupFolder);
                 }
-                ApplyRetention(target);
+                CountRetention(target);
             }
         }
     }

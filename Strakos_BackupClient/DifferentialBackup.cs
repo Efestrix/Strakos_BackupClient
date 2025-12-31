@@ -11,22 +11,36 @@ namespace Strakos_BackupClient
         public DifferentialBackup(BackupJob job) : base(job) { }
         public override void Run()
         {
-            if (!ExistsFullBackup())
-            {
-                Console.WriteLine("Nelze provést differential backup");
-                Console.WriteLine("Neexistuje full backup");
-                return;
-            }
             foreach (var target in Job.Targets)
             {
-                DirectoryInfo lastFullBackup = GetLastFullBackup(target);
+                if(!Directory.Exists(target))
+                {
+                    Console.WriteLine($"Target neexistuje: {target}");
+                    continue;
+                }
+                if (!HasFullBackup(target))
+                {
+                    Console.WriteLine($"Target {target} nemá full backup");
+                    continue;
+                }
+                if (SizeRetention(target))
+                {
+                    Console.WriteLine("Limit size dosažen");
+                    continue;
+                }
 
+                DirectoryInfo lastFullBackup = GetLastFullBackup(target);
                 string diffFolder = CreateBackupFolder(target, "diff");
+
                 foreach (var source in Job.Sources)
                 {
-                    FileInfo[] sourceFiles = GetAllSourceFiles(source);
+                    if (!Directory.Exists(source))
+                    {
+                        Console.WriteLine($"Source neexistuje: {source}");
+                        continue;
+                    }
 
-                    foreach (FileInfo sourceFile in sourceFiles)
+                    foreach (FileInfo sourceFile in GetAllSourceFiles(source))
                     {
                         string fullBackupFilePath = TargetPath(source, lastFullBackup.FullName, sourceFile);
 
@@ -49,21 +63,8 @@ namespace Strakos_BackupClient
                         }
                     }
                 }
-                ApplyRetention(target);
+                CountRetention(target);
             }
-        }
-        protected bool ExistsFullBackup()
-        {
-            foreach (var target in Job.Targets)
-            {
-                DirectoryInfo fullBackup = new DirectoryInfo(target);
-
-                if (fullBackup.GetDirectories().Any(dir => dir.Name.StartsWith("full_")))
-                {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }

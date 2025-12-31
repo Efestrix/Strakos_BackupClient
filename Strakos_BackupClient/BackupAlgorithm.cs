@@ -72,7 +72,7 @@ namespace Strakos_BackupClient
 
             DirectoryInfo? lastBackup =
                 targetInfo.GetDirectories()
-                          .Where(d => d.Name.StartsWith("full_") || 
+                          .Where(d => d.Name.StartsWith("full_") ||
                           d.Name.StartsWith("incr_"))
                           .OrderByDescending(d => d.CreationTime)
                           .FirstOrDefault();
@@ -92,12 +92,7 @@ namespace Strakos_BackupClient
             string relativePath = Path.GetRelativePath(sourceDir, sourceFile.FullName);
             return Path.Combine(targetDir, relativePath);
         }
-        protected void ApplyRetention(string targetDir)
-        {
-            CountRetention(targetDir);
-            SizeRetention(targetDir);
-        }
-        private void CountRetention(string targetDir)
+        protected void CountRetention(string targetDir)
         {
             if (Job.Retention.Count <= 0)
                 return;
@@ -110,35 +105,41 @@ namespace Strakos_BackupClient
 
             while (backups.Count > Job.Retention.Count)
             {
+                Console.WriteLine($"Mazání backupu {backups[0].Name}");
                 backups[0].Delete(true);
                 backups.RemoveAt(0);
             }
         }
-        private void SizeRetention(string targetDir)
+        protected bool SizeRetention(string targetDir)
         {
             if (Job.Retention.Size <= 0)
-                return;
+                return false;
 
             DirectoryInfo target = new DirectoryInfo(targetDir);
+            if (!target.Exists)
+                return false;
 
             List<DirectoryInfo> backups = target.GetDirectories()
-                .OrderBy(d => d.CreationTime)
+                .OrderByDescending(d => d.CreationTime)
                 .ToList();
 
-            long totalSize = backups.Sum(b => GetDirectorySize(b));
+            int length = 0;
 
-            while (totalSize > Job.Retention.Size && backups.Count > 0)
+            foreach (DirectoryInfo dir in backups)
             {
-                long removedSize = GetDirectorySize(backups[0]);
-                backups[0].Delete(true);
-                backups.RemoveAt(0);
-                totalSize -= removedSize;
+                if (dir.Name.StartsWith("full_") ||
+                    dir.Name.StartsWith("diff_") ||
+                    dir.Name.StartsWith("incr_"))
+                    length++;
             }
+            return length >= Job.Retention.Size;
         }
-        protected long GetDirectorySize(DirectoryInfo dir)
+        protected bool HasFullBackup(string targetDir)
         {
-            return dir.GetFiles("*", SearchOption.AllDirectories)
-                       .Sum(f => f.Length);
+            DirectoryInfo target = new DirectoryInfo(targetDir);
+
+            return target.Exists && target.GetDirectories()
+                .Any(d => d.Name.StartsWith("full_"));
         }
     }
 }

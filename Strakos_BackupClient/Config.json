@@ -4,13 +4,13 @@
       "C:\\Users\\jacob\\Desktop\\Blbosti"
     ],
     "targets": [
-      "C:\\Users\\jacob\\Desktop\\BackupTest"
+      "C:\\Users\\jacob\\Desktop\\BackupTest1"
     ],
-    "method": "differential",
-    "timing": "0 12 * * * ?",
+    "method": "full",
+    "timing": "0 26 * * * ?",
     "retention": {
       "count": 10,
-      "size": 5
+      "size": 3
     }
   }
 ]

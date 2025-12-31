@@ -11,22 +11,33 @@ namespace Strakos_BackupClient
         public IncrementalBackup(BackupJob job) : base(job) { }
         public override void Run()
         {
-            if (!ExistsAnyBackup())
-            {
-                Console.WriteLine("Nelze provést incremental backup");
-                Console.WriteLine("Neexistuje full, diff ani incr backup");
-                return;
-            }
             foreach (var target in Job.Targets)
             {
+                if (!Directory.Exists(target))
+                {
+                    Console.WriteLine($"Target neexistuje: {target}");
+                    continue;
+                }
+                if (!HasFullBackup(target))
+                {
+                    Console.WriteLine($"Target {target} nemá full backup");
+                    continue;
+                }
+                if (SizeRetention(target))
+                {
+                    Console.WriteLine("Limit size dosažen");
+                    continue;
+                }
+
                 DirectoryInfo lastBackup = GetLastBackupForIncremental(target);
 
                 string incFolder = CreateBackupFolder(target, "incr");
                 foreach (var source in Job.Sources)
                 {
-                    FileInfo[] sourceFiles = GetAllSourceFiles(source);
+                    if (!Directory.Exists(source))
+                        continue;
 
-                    foreach (FileInfo sourceFile in sourceFiles)
+                    foreach (FileInfo sourceFile in GetAllSourceFiles(source))
                     {
                         string lastBackupFilePath = TargetPath(source, lastBackup.FullName, sourceFile);
 
@@ -49,23 +60,8 @@ namespace Strakos_BackupClient
                         }
                     }
                 }
-                ApplyRetention(target);
+                CountRetention(target);
             }
-        }
-        protected bool ExistsAnyBackup()
-        {
-            foreach (var target in Job.Targets)
-            {
-                DirectoryInfo backup = new DirectoryInfo(target);
-
-                if (backup.GetDirectories().Any(dir => dir.Name.StartsWith("full_") ||
-                dir.Name.StartsWith("diff_") ||
-                dir.Name.StartsWith("incr_")))
-                {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }
