@@ -7,9 +7,9 @@
       "C:\\Users\\jacob\\Desktop\\BackupTest1"
     ],
     "method": "full",
-    "timing": "0 26 * * * ?",
+    "timing": "48 * * * *",
     "retention": {
-      "count": 10,
+      "count": 2,
       "size": 3
     }
   }

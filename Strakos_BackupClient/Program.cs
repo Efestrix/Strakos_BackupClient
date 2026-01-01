@@ -43,7 +43,7 @@ namespace Strakos_BackupClient
             ITrigger trigger = TriggerBuilder
                 .Create()
                 .WithIdentity("BackupTrigger")
-                .WithCronSchedule(job.Timing)
+                .WithCronSchedule("0 " + job.Timing + " ?")
                 .StartNow()
                 .Build();
 
