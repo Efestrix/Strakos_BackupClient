@@ -23,8 +23,8 @@ namespace Strakos_BackupClient
             {
                 PropertyNameCaseInsensitive = true,
             };
-            var jobs = JsonSerializer.Deserialize<List<BackupJob>>(json, options)!;
-            var job = jobs[0];
+            List<BackupJob> jobs = JsonSerializer.Deserialize<List<BackupJob>>(json, options)!;
+            BackupJob job = jobs[0];
 
             BackupAlgorithm algorithm;
 
