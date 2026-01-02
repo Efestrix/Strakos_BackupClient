@@ -127,8 +127,10 @@ namespace Strakos_BackupClient
 
             foreach (DirectoryInfo dir in backups)
             {
-                if (dir.Name.StartsWith("full_") ||
-                    dir.Name.StartsWith("diff_") ||
+                if (dir.Name.StartsWith("full_"))
+                    break;
+
+                if (dir.Name.StartsWith("diff_") ||
                     dir.Name.StartsWith("incr_"))
                     length++;
             }

@@ -11,10 +11,10 @@ namespace Strakos_BackupClient
         public FullBackup(BackupJob job) : base(job) { }
         public override void Run()
         {
-            foreach (var target in Job.Targets)
+            foreach (string target in Job.Targets)
             {
                 string backupFolder = CreateBackupFolder(target, "full");
-                foreach (var source in Job.Sources)
+                foreach (string source in Job.Sources)
                 {
                     Copy(source, backupFolder);
                 }
