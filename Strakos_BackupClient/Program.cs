@@ -1,5 +1,7 @@
 ﻿using Quartz;
 using Quartz.Impl;
+using Strakos_BackupClient.Entities;
+using Strakos_BackupClient.Timing;
 using System.Text.Json;
 
 namespace Strakos_BackupClient

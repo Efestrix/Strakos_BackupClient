@@ -1,4 +1,6 @@
 ﻿using Quartz;
+using Strakos_BackupClient.Entities;
+using Strakos_BackupClient.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +8,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Strakos_BackupClient
+namespace Strakos_BackupClient.Timing
 {
     public class QuartzJob : IJob
     {

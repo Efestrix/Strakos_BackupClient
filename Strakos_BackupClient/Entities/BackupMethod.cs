@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Strakos_BackupClient
+namespace Strakos_BackupClient.Entities
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum BackupMethod
