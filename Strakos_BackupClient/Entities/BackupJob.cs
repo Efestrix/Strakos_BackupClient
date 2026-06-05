@@ -9,6 +9,7 @@ namespace Strakos_BackupClient.Entities
 {
     public class BackupJob
     {
+        public int Id { get; set; } = 0;
         [JsonPropertyName("sources")]
         public List<string> Sources { get; set; } = new List<string>();
         [JsonPropertyName("targets")]

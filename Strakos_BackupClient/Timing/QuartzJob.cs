@@ -1,4 +1,6 @@
 ﻿using Quartz;
+using Strakos_BackupClient.Api;
+using Strakos_BackupClient.Backups;
 using Strakos_BackupClient.Entities;
 using Strakos_BackupClient.Helper;
 using System;
@@ -12,21 +14,24 @@ namespace Strakos_BackupClient.Timing
 {
     public class QuartzJob : IJob
     {
-        public Task Execute(IJobExecutionContext context)
+        public async Task Execute(IJobExecutionContext context)
         {
-            if (!File.Exists("Config.json"))
+            string computerUuid = context.JobDetail.JobDataMap.GetString("computerUuid")!;
+            string apiUrl = context.JobDetail.JobDataMap.GetString("apiUrl")!;
+
+            int jobId = context.JobDetail.JobDataMap.GetInt("jobId");
+
+            ApiConfigRepository repository = new ApiConfigRepository(apiUrl);
+            List<BackupJob> jobs = await repository.LoadJobsAsync(computerUuid);
+
+            BackupJob? job = jobs
+                .FirstOrDefault(j => j.Id == jobId);
+
+            if (jobs == null || jobs.Count == 0)
             {
-                Console.WriteLine("Config.json nebyl nalezen");
+                Console.WriteLine($"Job ID {jobId} nebyl nalezen");
+                return;
             }
-
-            string json = File.ReadAllText("Config.json");
-
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            };
-            List<BackupJob> jobs = JsonSerializer.Deserialize<List<BackupJob>>(json, options)!;
-            BackupJob job = jobs[0];
 
             BackupAlgorithm algorithm;
 
@@ -43,13 +48,11 @@ namespace Strakos_BackupClient.Timing
                     break;
                 default:
                     Console.WriteLine("Neznámý typ backupu.");
-                    return Task.CompletedTask;
+                    return;
             }
             algorithm.Run();
 
             Console.WriteLine($"[{DateTime.Now}] Backup dokončen");
-
-            return Task.CompletedTask;
         }
     }
 }
