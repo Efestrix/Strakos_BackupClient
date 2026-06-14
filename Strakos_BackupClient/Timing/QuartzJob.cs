@@ -24,10 +24,16 @@ namespace Strakos_BackupClient.Timing
             ApiConfigRepository repository = new ApiConfigRepository(apiUrl);
             List<BackupJob> jobs = await repository.LoadJobsAsync(computerUuid);
 
+            if (jobs == null || jobs.Count == 0)
+            {
+                Console.WriteLine($"Job ID {jobId} nebyl nalezen");
+                return;
+            }
+
             BackupJob? job = jobs
                 .FirstOrDefault(j => j.Id == jobId);
 
-            if (jobs == null || jobs.Count == 0)
+            if (job == null)
             {
                 Console.WriteLine($"Job ID {jobId} nebyl nalezen");
                 return;

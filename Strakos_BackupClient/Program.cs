@@ -13,7 +13,7 @@ namespace Strakos_BackupClient
         {
             Console.WriteLine("Startuji BackupClient");
 
-            string computerUuid = "a3543586-4995-46d2-a27f-07b5e2e98fe7";
+            string computerUuid = "05aba05b-8ea8-4273-a60a-616fdd0a6ef7";
             string apiUrl = "https://localhost:7273";
 
             ApiConfigRepository repository = new ApiConfigRepository(apiUrl);
@@ -36,13 +36,16 @@ namespace Strakos_BackupClient
                     .Create<QuartzJob>()
                     .UsingJobData("computerUuid", computerUuid)
                     .UsingJobData("apiUrl", apiUrl)
-                    .UsingJobData("jobIndex", job.Id)
+                    .UsingJobData("jobId", job.Id)
                     .WithIdentity($"Job_{job.Id}")
                     .Build();
 
                 string quartzCron = ConvertToQuartzCron(job.Timing);
 
                 Console.WriteLine("Quartz Cron: " + quartzCron);
+                Console.WriteLine("Method: " + job.Method);
+                Console.WriteLine("Retention count: " + job.Retention.Count);
+                Console.WriteLine("Retention size: " + job.Retention.Size);
 
                 ITrigger trigger = TriggerBuilder
                     .Create()
